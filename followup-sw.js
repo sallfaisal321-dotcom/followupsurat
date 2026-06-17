@@ -1,7 +1,7 @@
 const CACHE = 'followup-v1';
 const ASSETS = [
   './',
-  './followup-index.html',
+  './index.html',
   './followup-manifest.json',
   './followup-icon-192.png',
   './followup-icon-512.png'
