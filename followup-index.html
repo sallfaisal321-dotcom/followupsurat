@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Follow-Up Surat Kendaraan</title>
+    <link rel="manifest" href="followup-manifest.json">
+    <meta name="theme-color" content="#059669">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FollowUp">
+    <link rel="apple-touch-icon" href="followup-icon-192.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+    <header class="bg-gradient-to-r from-emerald-600 to-teal-700 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row justify-between items-center gap-3">
+            <div class="flex items-center gap-3 w-full md:w-auto">
+                <div class="bg-white/15 p-2 rounded-xl shrink-0">
+                    <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.965C16.38 2.016 13.908.993 11.284.993 5.845.993 1.42 5.362 1.416 10.79c-.001 1.743.461 3.447 1.337 4.947L1.725 21.8l6.115-1.597c1.512.879 3.197 1.341 4.807 1.343zM18.342 15.02c-.326-.162-1.927-.938-2.226-1.046-.299-.109-.517-.162-.734.162-.218.324-.844 1.046-1.034 1.262-.19.217-.381.244-.707.082-.326-.162-1.378-.501-2.624-1.597-1-.88-1.674-1.967-1.871-2.29-.196-.324-.02-.5-.183-.661-.148-.145-.326-.379-.49-.569-.162-.189-.217-.324-.326-.541-.109-.217-.055-.405-.027-.568.027-.162.217-.514.326-.676.109-.162.145-.271.218-.405.073-.135.036-.252-.018-.36-.055-.108-.517-1.22-.708-1.68-.186-.446-.37-.387-.507-.394l-.435-.008c-.15 0-.394.055-.6.279-.205.224-.783.753-.783 1.836 0 1.083.801 2.129.91 2.277.109.149 1.575 2.37 3.816 3.326.533.228.95.364 1.274.466.536.168 1.023.144 1.408.088.429-.063 1.314-.53 1.498-1.042.184-.513.184-.954.129-1.046-.054-.091-.2-.146-.527-.308z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-bold tracking-tight">Follow-Up Surat Kendaraan</h1>
+                    <p class="text-[10px] sm:text-xs text-emerald-100">Solusi Cepat Hubungi Konsumen via WhatsApp</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+                <label class="cursor-pointer bg-white text-emerald-700 hover:bg-emerald-50 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold shadow-sm transition-all flex items-center gap-1.5 shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                    Impor Excel
+                    <input type="file" id="xlsxFileInput" accept=".xlsx, .xls" class="hidden" onchange="handleXLSXUpload(event)">
+                </label>
+                <button onclick="exportToXLSX()" class="bg-emerald-800 hover:bg-emerald-900 text-white px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold shadow-sm transition-all flex items-center gap-1.5 shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    Ekspor
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+            <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                <div>
+                    <p class="text-xs sm:text-sm text-slate-500 font-medium">Total Konsumen</p>
+                    <p class="text-2xl sm:text-3xl font-extrabold text-slate-800 mt-0.5" id="stat-total">0</p>
+                </div>
+                <div class="bg-blue-50 p-2 sm:p-3 rounded-xl text-blue-600">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                </div>
+            </div>
+            <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                <div>
+                    <p class="text-xs sm:text-sm text-slate-500 font-medium">Belum Dihubungi</p>
+                    <p class="text-2xl sm:text-3xl font-extrabold text-amber-600 mt-0.5" id="stat-pending">0</p>
+                </div>
+                <div class="bg-amber-50 p-2 sm:p-3 rounded-xl text-amber-600">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+            </div>
+            <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                <div>
+                    <p class="text-xs sm:text-sm text-slate-500 font-medium">Sudah Dihubungi</p>
+                    <p class="text-2xl sm:text-3xl font-extrabold text-emerald-600 mt-0.5" id="stat-contacted">0</p>
+                </div>
+                <div class="bg-emerald-50 p-2 sm:p-3 rounded-xl text-emerald-600">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                </div>
+            </div>
+            <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                <div>
+                    <p class="text-xs sm:text-sm text-slate-500 font-medium">Selesai Diambil</p>
+                    <p class="text-2xl sm:text-3xl font-extrabold text-indigo-600 mt-0.5" id="stat-completed">0</p>
+                </div>
+                <div class="bg-indigo-50 p-2 sm:p-3 rounded-xl text-indigo-600">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-1 space-y-6">
+                <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
+                            <span class="p-1.5 bg-emerald-100 rounded-lg text-emerald-700">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                            </span>
+                            Template Pesan WA
+                        </h2>
+                        <button onclick="resetTemplate()" class="text-xs text-slate-400 hover:text-emerald-600 transition-all font-medium">Reset</button>
+                    </div>
+                    <p class="text-xs text-slate-500 mb-3 leading-relaxed">Kustomisasi isi draf pesan Anda di bawah ini:</p>
+                    <div class="flex flex-wrap gap-1.5 mb-4">
+                        <button onclick="insertTag('[Nama]')" class="text-[10px] sm:text-[11px] bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 font-bold px-2 py-1 rounded-lg transition-all border border-slate-200">[Nama]</button>
+                        <button onclick="insertTag('[NoMesin]')" class="text-[10px] sm:text-[11px] bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 font-bold px-2 py-1 rounded-lg transition-all border border-slate-200">[NoMesin]</button>
+                        <button onclick="insertTag('[NoPolisi]')" class="text-[10px] sm:text-[11px] bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 font-bold px-2 py-1 rounded-lg transition-all border border-slate-200">[NoPolisi]</button>
+                        <button onclick="insertTag('[Keterangan]')" class="text-[10px] sm:text-[11px] bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 font-bold px-2 py-1 rounded-lg transition-all border border-slate-200">[Keterangan]</button>
+                    </div>
+                    <textarea id="messageTemplate" rows="8" class="w-full text-sm p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all resize-y leading-relaxed bg-slate-50/50" oninput="saveTemplate()"></textarea>
+                    <div class="mt-4 bg-emerald-50/50 border border-emerald-100/60 p-4 rounded-xl">
+                        <p class="text-xs font-semibold text-emerald-800 mb-1 flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Tips WhatsApp
+                        </p>
+                        <p class="text-[11px] text-emerald-700/80 leading-relaxed">Ketika Anda menekan tombol "Hubungi", browser akan membuka draf pesan otomatis di WhatsApp. Status konsumen akan otomatis berubah menjadi "Sudah Dihubungi".</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2 space-y-4">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="p-4 sm:p-6 border-b border-slate-100 bg-slate-50/50 flex flex-col gap-3">
+                        <div class="relative w-full">
+                            <input type="text" id="searchInput" placeholder="Cari nama, nopol, mesin, telp..." class="w-full text-sm pl-10 pr-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all bg-white" oninput="applyFiltersAndRender()">
+                            <span class="absolute left-3.5 top-3.5 text-slate-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 w-full">
+                            <select id="docFilter" class="w-full text-xs sm:text-sm p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-white font-medium" onchange="applyFiltersAndRender()">
+                                <option value="Semua">Semua Surat</option>
+                                <option value="STCK">STCK</option>
+                                <option value="Notice Pajak">Notice Pajak</option>
+                                <option value="STNK">STNK</option>
+                                <option value="Plat">PLAT</option>
+                                <option value="BPKB">BPKB</option>
+                            </select>
+                            <select id="statusFilter" class="w-full text-xs sm:text-sm p-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-white font-medium" onchange="applyFiltersAndRender()">
+                                <option value="Semua">Semua Status</option>
+                                <option value="Belum Dihubungi">Belum</option>
+                                <option value="Sudah Dihubungi">Di-WA</option>
+                                <option value="Selesai Diambil">Selesai</option>
+                            </select>
+                            <button onclick="openAddModal()" class="col-span-2 sm:col-span-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs sm:text-sm px-4 py-2.5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-1.5 w-full">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                Tambah Data
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="hidden md:block overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-500 text-xs font-bold uppercase tracking-wider border-b border-slate-100">
+                                    <th class="py-4 px-6">Nama Konsumen</th>
+                                    <th class="py-4 px-6">Detail Kendaraan</th>
+                                    <th class="py-4 px-6">No. Telepon</th>
+                                    <th class="py-4 px-6">Status</th>
+                                    <th class="py-4 px-6 text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="consumerTableBody" class="divide-y divide-slate-100 text-sm"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="md:hidden divide-y divide-slate-100" id="consumerCardsBody"></div>
+
+                    <div id="emptyState" class="hidden p-12 text-center">
+                        <div class="bg-slate-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <h3 class="text-md font-bold text-slate-700 mb-1">Data Belum Dimuat</h3>
+                        <p class="text-xs text-slate-400">Silakan gunakan tombol <b>"Impor Excel"</b> atau <b>"Tambah Data"</b> di atas untuk memasukkan data konsumen.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="consumerModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full shadow-xl overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 id="modalTitle" class="font-bold text-slate-800 text-lg">Tambah Konsumen Baru</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 transition-all">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <form id="consumerForm" onsubmit="saveConsumer(event)" class="p-6 space-y-4">
+                <input type="hidden" id="editIndex">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nama Konsumen</label>
+                    <input type="text" id="formNama" required class="w-full p-2.5 text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nomor Polisi</label>
+                        <input type="text" id="formNoPolisi" placeholder="DA 1234 XX" class="w-full p-2.5 text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nomor Mesin</label>
+                        <input type="text" id="formNoMesin" required class="w-full p-2.5 text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nomor Telepon (WA)</label>
+                    <input type="text" id="formNoTlp" required placeholder="Contoh: 08123456789" class="w-full p-2.5 text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Keterangan Dokumen</label>
+                    <select id="formKet" class="w-full p-2.5 text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
+                        <option value="STCK">STCK</option>
+                        <option value="Notice Pajak">Notice Pajak</option>
+                        <option value="STNK">STNK</option>
+                        <option value="Plat">Plat</option>
+                        <option value="BPKB">BPKB</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Status Progres</label>
+                    <select id="formStatus" class="w-full p-2.5 text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
+                        <option value="Belum Dihubungi">Belum Dihubungi</option>
+                        <option value="Sudah Dihubungi">Sudah Dihubungi</option>
+                        <option value="Selesai Diambil">Selesai Diambil</option>
+                    </select>
+                </div>
+                <div class="pt-4 border-t border-slate-100 flex justify-end gap-2">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 text-sm font-semibold text-slate-500 hover:bg-slate-100 rounded-xl transition-all">Batal</button>
+                    <button type="submit" class="px-4 py-2 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition-all shadow-sm">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 transition-all duration-300 transform translate-y-20 opacity-0 z-50">
+        <span class="text-emerald-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </span>
+        <span id="toastMessage" class="text-sm font-medium">Pesan sukses</span>
+    </div>
+
+    <script>
+        const DEFAULT_TEMPLATE = "Halo Kak [Nama],\n\nKami ingin menginfokan bahwa dokumen ([Keterangan]) untuk kendaraan dengan nomor polisi [NoPolisi] (No. Mesin: [NoMesin]) sudah selesai dan siap diambil di kantor kami.\n\nSilakan datang dengan membawa kartu identitas (KTP) asli. Terima kasih!";
+
+        let consumers = [];
+        let filteredConsumers = [];
+
+        window.onload = function() {
+            const saved = localStorage.getItem('consumer_followup_data_clean_v5');
+            consumers = saved ? JSON.parse(saved) : [];
+            saveToLocalStorage();
+
+            const savedTemplate = localStorage.getItem('consumer_followup_template_clean_v5');
+            document.getElementById('messageTemplate').value = savedTemplate || DEFAULT_TEMPLATE;
+
+            applyFiltersAndRender();
+        };
+
+        function saveToLocalStorage() {
+            localStorage.setItem('consumer_followup_data_clean_v5', JSON.stringify(consumers));
+        }
+
+        function saveTemplate() {
+            localStorage.setItem('consumer_followup_template_clean_v5', document.getElementById('messageTemplate').value);
+        }
+
+        function resetTemplate() {
+            document.getElementById('messageTemplate').value = DEFAULT_TEMPLATE;
+            saveTemplate();
+            showToast("Template disetel ulang ke default");
+        }
+
+        function insertTag(tag) {
+            const textarea = document.getElementById('messageTemplate');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            textarea.value = textarea.value.substring(0, start) + tag + textarea.value.substring(end);
+            textarea.focus();
+            textarea.selectionStart = textarea.selectionEnd = start + tag.length;
+            saveTemplate();
+        }
+
+        function formatPhoneNumber(phone) {
+            if (!phone) return '';
+            let cleaned = String(phone).replace(/\s+/g, '').replace(/[^0-9]/g, '');
+            if (cleaned.startsWith('0')) cleaned = '62' + cleaned.substring(1);
+            else if (cleaned.startsWith('8')) cleaned = '62' + cleaned;
+            else if (!cleaned.startsWith('62')) cleaned = '62' + cleaned;
+            return cleaned;
+        }
+
+        function triggerWhatsApp(index) {
+            const consumer = consumers[index];
+            const cleanPhone = formatPhoneNumber(consumer.phone);
+            if (!cleanPhone) { showToast("Nomor telepon tidak valid!"); return; }
+
+            let msg = document.getElementById('messageTemplate').value
+                .replace(/\[Nama\]/g, consumer.name)
+                .replace(/\[NoMesin\]/g, consumer.engineNo)
+                .replace(/\[NoPolisi\]/g, consumer.plateNo || '-')
+                .replace(/\[Keterangan\]/g, consumer.docType);
+
+            if (consumer.status === 'Belum Dihubungi') updateConsumerStatus(index, 'Sudah Dihubungi');
+            window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function updateConsumerStatus(index, newStatus) {
+            consumers[index].status = newStatus;
+            saveToLocalStorage();
+            applyFiltersAndRender();
+            showToast(`Status diperbarui: ${newStatus}`);
+        }
+
+        function getDocBadgeClass(docType) {
+            const map = { 'STCK':'bg-rose-50 text-rose-700 border-rose-200', 'Notice Pajak':'bg-amber-50 text-amber-700 border-amber-200', 'STNK':'bg-teal-50 text-teal-700 border-teal-200', 'Plat':'bg-blue-50 text-blue-700 border-blue-200', 'BPKB':'bg-purple-50 text-purple-700 border-purple-200' };
+            return map[docType] || 'bg-slate-100 text-slate-700 border-slate-200';
+        }
+
+        function handleXLSXUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+                    const ws = wb.Sheets[wb.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(ws, { defval: "" });
+                    if (!jsonData.length) { showToast("File Excel kosong!"); return; }
+
+                    const existingMap = {};
+                    consumers.forEach(c => { existingMap[`${c.name}_${c.engineNo}`] = c.status; });
+
+                    consumers = jsonData.map(row => {
+                        const get = (keys) => { const k = Object.keys(row).find(k => keys.some(kw => k.toUpperCase().includes(kw))); return k ? String(row[k]).trim() : null; };
+                        const name = (get(['NAMA','CUSTOMER','KONSUMEN']) || 'NAMA KOSONG').toUpperCase();
+                        const engineNo = (get(['MESIN','NO MESIN','ENGINE']) || '-').toUpperCase();
+                        const plateNo = (get(['POLISI','NOPOL','PLATE','PLAT']) || '-').toUpperCase();
+                        const phone = get(['TLP','TELP','TELEPON','PHONE','WA']) || '';
+                        let rawDoc = (get(['KET','KETERANGAN','DOKUMEN','SURAT']) || 'BPKB').toUpperCase();
+                        let docType = 'Lainnya';
+                        if (rawDoc.includes('STCK')) docType='STCK';
+                        else if (rawDoc.includes('PAJAK')||rawDoc.includes('NOTICE')) docType='Notice Pajak';
+                        else if (rawDoc.includes('STNK')) docType='STNK';
+                        else if (rawDoc.includes('PLAT')) docType='Plat';
+                        else if (rawDoc.includes('BPKB')) docType='BPKB';
+                        const status = existingMap[`${name}_${engineNo}`] || 'Belum Dihubungi';
+                        return { name, engineNo, plateNo, phone, docType, status };
+                    });
+
+                    saveToLocalStorage();
+                    applyFiltersAndRender();
+                    showToast(`Berhasil memuat ${consumers.length} data!`);
+                } catch(err) { showToast("Format Excel tidak didukung."); }
+                event.target.value = '';
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function exportToXLSX() {
+            const ws = XLSX.utils.json_to_sheet(consumers.map(c => ({ 'NAMA':c.name, 'NO POLISI':c.plateNo, 'NO MESIN':c.engineNo, 'NO TLP':c.phone, 'KET':c.docType, 'STATUS':c.status })));
+            ws['!cols'] = [{wch:28},{wch:16},{wch:20},{wch:18},{wch:15},{wch:18}];
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Followup");
+            XLSX.writeFile(wb, `Data_Followup_${new Date().toISOString().slice(0,10)}.xlsx`);
+            showToast("File Excel berhasil diunduh!");
+        }
+
+        function applyFiltersAndRender() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            const sf = document.getElementById('statusFilter').value;
+            const df = document.getElementById('docFilter').value;
+            filteredConsumers = consumers.filter(c =>
+                (c.name.toLowerCase().includes(q) || c.engineNo.toLowerCase().includes(q) || (c.plateNo||'').toLowerCase().includes(q) || c.phone.includes(q)) &&
+                (sf === 'Semua' || c.status === sf) &&
+                (df === 'Semua' || c.docType === df)
+            );
+            renderTable(); renderCards(); updateStats();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('consumerTableBody');
+            const empty = document.getElementById('emptyState');
+            tbody.innerHTML = '';
+            if (!filteredConsumers.length) { empty.classList.remove('hidden'); return; }
+            empty.classList.add('hidden');
+            filteredConsumers.forEach(consumer => {
+                const idx = consumers.indexOf(consumer);
+                let bc = "bg-amber-50 text-amber-700 border-amber-200";
+                if (consumer.status === 'Sudah Dihubungi') bc = "bg-emerald-50 text-emerald-700 border-emerald-200";
+                if (consumer.status === 'Selesai Diambil') bc = "bg-indigo-50 text-indigo-700 border-indigo-200";
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/70 transition-all";
+                tr.innerHTML = `
+                    <td class="py-4 px-6"><p class="font-semibold text-slate-800">${consumer.name}</p><p class="text-xs text-slate-400 font-medium">Nopol: ${consumer.plateNo||'-'}</p></td>
+                    <td class="py-4 px-6"><p class="text-xs font-bold text-slate-500 mb-1.5">${consumer.engineNo}</p><span class="inline-block text-[11px] border px-2.5 py-0.5 rounded-full font-bold ${getDocBadgeClass(consumer.docType)}">${consumer.docType}</span></td>
+                    <td class="py-4 px-6 font-medium text-slate-600">${consumer.phone}</td>
+                    <td class="py-4 px-6">
+                        <select onchange="updateConsumerStatus(${idx}, this.value)" class="text-xs font-semibold px-2.5 py-1.5 rounded-full border ${bc} outline-none cursor-pointer bg-white">
+                            <option value="Belum Dihubungi" ${consumer.status==='Belum Dihubungi'?'selected':''}>Belum Dihubungi</option>
+                            <option value="Sudah Dihubungi" ${consumer.status==='Sudah Dihubungi'?'selected':''}>Sudah Dihubungi</option>
+                            <option value="Selesai Diambil" ${consumer.status==='Selesai Diambil'?'selected':''}>Selesai Diambil</option>
+                        </select>
+                    </td>
+                    <td class="py-4 px-6 text-right">
+                        <div class="flex justify-end gap-2 items-center">
+                            <button onclick="triggerWhatsApp(${idx})" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition-all shadow-sm flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.965C16.38 2.016 13.908.993 11.284.993 5.845.993 1.42 5.362 1.416 10.79c-.001 1.743.461 3.447 1.337 4.947L1.725 21.8l6.115-1.597c1.512.879 3.197 1.341 4.807 1.343zM18.342 15.02c-.326-.162-1.927-.938-2.226-1.046-.299-.109-.517-.162-.734.162-.218.324-.844 1.046-1.034 1.262-.19.217-.381.244-.707.082-.326-.162-1.378-.501-2.624-1.597-1-.88-1.674-1.967-1.871-2.29-.196-.324-.02-.5-.183-.661-.148-.145-.326-.379-.49-.569-.162-.189-.217-.324-.326-.541-.109-.217-.055-.405-.027-.568.027-.162.217-.514.326-.676.109-.162.145-.271.218-.405.073-.135.036-.252-.018-.36-.055-.108-.517-1.22-.708-1.68-.186-.446-.37-.387-.507-.394l-.435-.008c-.15 0-.394.055-.6.279-.205.224-.783.753-.783 1.836 0 1.083.801 2.129.91 2.277.109.149 1.575 2.37 3.816 3.326.533.228.95.364 1.274.466.536.168 1.023.144 1.408.088.429-.063 1.314-.53 1.498-1.042.184-.513.184-.954.129-1.046-.054-.091-.2-.146-.527-.308z"/></svg>
+                                Hubungi
+                            </button>
+                            <button onclick="editConsumer(${idx})" class="p-2 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-700 transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg></button>
+                            <button onclick="deleteConsumer(${idx})" class="p-2 hover:bg-red-50 rounded-lg text-slate-400 hover:text-red-500 transition-all"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+                        </div>
+                    </td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderCards() {
+            const container = document.getElementById('consumerCardsBody');
+            container.innerHTML = '';
+            filteredConsumers.forEach(consumer => {
+                const idx = consumers.indexOf(consumer);
+                let bc = "bg-amber-100 text-amber-800";
+                if (consumer.status==='Sudah Dihubungi') bc="bg-emerald-100 text-emerald-800";
+                if (consumer.status==='Selesai Diambil') bc="bg-indigo-100 text-indigo-800";
+                const card = document.createElement('div');
+                card.className = "p-5 space-y-4 hover:bg-slate-50/50 transition-all";
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-base">${consumer.name}</h4>
+                            <p class="text-xs font-bold text-emerald-600 mt-0.5">Nopol: ${consumer.plateNo||'-'}</p>
+                            <p class="text-[11px] font-medium text-slate-400 mt-0.5">Mesin: ${consumer.engineNo}</p>
+                            <span class="inline-block mt-2 text-[11px] border px-2.5 py-0.5 rounded-full font-bold ${getDocBadgeClass(consumer.docType)}">${consumer.docType}</span>
+                        </div>
+                        <span class="text-xs px-2.5 py-1 rounded-full font-semibold ${bc}">${consumer.status}</span>
+                    </div>
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100">
+                        <div class="text-xs text-slate-500"><p class="font-medium">No. Tlp:</p><p class="font-bold text-slate-700">${consumer.phone}</p></div>
+                        <div class="flex gap-2">
+                            <button onclick="editConsumer(${idx})" class="p-2 bg-slate-100 rounded-xl text-slate-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg></button>
+                            <button onclick="deleteConsumer(${idx})" class="p-2 bg-red-50 text-red-500 rounded-xl"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+                            <button onclick="triggerWhatsApp(${idx})" class="bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24z"/></svg>
+                                WA
+                            </button>
+                        </div>
+                    </div>`;
+                container.appendChild(card);
+            });
+        }
+
+        function updateStats() {
+            document.getElementById('stat-total').innerText = consumers.length;
+            document.getElementById('stat-pending').innerText = consumers.filter(c=>c.status==='Belum Dihubungi').length;
+            document.getElementById('stat-contacted').innerText = consumers.filter(c=>c.status==='Sudah Dihubungi').length;
+            document.getElementById('stat-completed').innerText = consumers.filter(c=>c.status==='Selesai Diambil').length;
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').innerText = 'Tambah Konsumen Baru';
+            document.getElementById('editIndex').value = '';
+            document.getElementById('consumerForm').reset();
+            document.getElementById('formStatus').value = 'Belum Dihubungi';
+            document.getElementById('formKet').value = 'BPKB';
+            document.getElementById('consumerModal').classList.remove('hidden');
+        }
+
+        function closeModal() { document.getElementById('consumerModal').classList.add('hidden'); }
+
+        function saveConsumer(event) {
+            event.preventDefault();
+            const idx = document.getElementById('editIndex').value;
+            const data = {
+                name: document.getElementById('formNama').value.toUpperCase().trim(),
+                plateNo: document.getElementById('formNoPolisi').value.toUpperCase().trim(),
+                engineNo: document.getElementById('formNoMesin').value.toUpperCase().trim(),
+                phone: document.getElementById('formNoTlp').value.trim(),
+                docType: document.getElementById('formKet').value,
+                status: document.getElementById('formStatus').value
+            };
+            if (idx === '') { consumers.unshift(data); showToast("Konsumen baru ditambahkan!"); }
+            else { consumers[idx] = data; showToast("Data konsumen diperbarui!"); }
+            saveToLocalStorage(); closeModal(); applyFiltersAndRender();
+        }
+
+        function editConsumer(idx) {
+            const c = consumers[idx];
+            document.getElementById('modalTitle').innerText = 'Edit Detail Konsumen';
+            document.getElementById('editIndex').value = idx;
+            document.getElementById('formNama').value = c.name;
+            document.getElementById('formNoPolisi').value = c.plateNo||'';
+            document.getElementById('formNoMesin').value = c.engineNo;
+            document.getElementById('formNoTlp').value = c.phone;
+            document.getElementById('formKet').value = c.docType;
+            document.getElementById('formStatus').value = c.status;
+            document.getElementById('consumerModal').classList.remove('hidden');
+        }
+
+        function deleteConsumer(idx) {
+            if (confirm(`Hapus data "${consumers[idx].name}"?`)) {
+                consumers.splice(idx, 1);
+                saveToLocalStorage(); applyFiltersAndRender();
+                showToast("Data dihapus");
+            }
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            document.getElementById('toastMessage').innerText = msg;
+            t.classList.remove('translate-y-20','opacity-0');
+            t.classList.add('translate-y-0','opacity-100');
+            setTimeout(()=>{ t.classList.remove('translate-y-0','opacity-100'); t.classList.add('translate-y-20','opacity-0'); }, 3000);
+        }
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./followup-sw.js')
+                    .catch(e => console.log('SW error:', e));
+            });
+        }
+    </script>
+</body>
+</html>
